@@ -2,22 +2,22 @@
 
 ## Índice
 
-- [generarReporteDePagosRealizados](#requisito:-generarReporteDePagosRealizados)
-- [registrarEntidadBancaria](#requisito:-registrarEntidadBancaria)
-- [eliminarDeuda](#requisito:-eliminarDeuda)
-- [registrarDeuda](#cu-04-asignar-rol-a-usuario)
-- [registrarPagoEfectivo/Transferencia](#cu-05-definir-permisos-de-rol)
-- [modificarFechaMaximaDePagoDeUnaDeuda](#cu-06-iniciar-sesión)
-- [definirValorMensualDeAlicuotas](#cu-07-actualizar-perfil)
-- [consultarDeuda](#cu-08-recuperar-contraseña)
-- [consultarPagosEfectuados](#cu-09-enviar-token-de-restablecimiento)
-- [solicitarPagoEnCuotas](#cu-09-enviar-token-de-restablecimiento)
-- [eliminarFormaDePagoRecurrente](#cu-09-enviar-token-de-restablecimiento)
-- [generarCertificadoDeNoDeudor](#cu-09-enviar-token-de-restablecimiento)
-- [registrarPago](#cu-09-enviar-token-de-restablecimiento)
-- [definirPagoDeAlicuotasDeFormaMensual](#cu-09-enviar-token-de-restablecimiento)
-- [registrarDeudaMensual](#cu-09-enviar-token-de-restablecimiento)
-- [enviarRecordatorioDeDeudaPendiente](#cu-09-enviar-token-de-restablecimiento)
+- [generarReporteDePagosRealizados](#requisito-generareportedepagosrealizados)
+- [registrarEntidadBancaria](#requisito-registrarentidadbancaria)
+- [eliminarDeuda](#requisito-eliminarDeuda)
+- [registrarDeuda](#requisito-registrardeuda)
+- [registrarPagoEnEfectivo/Transferencia](#requisito-registrarpagoenefectivotransferencia)
+- [modificarFechaMaximaDePagoDeUnaDeuda](#requisito-modificarfechamaximadepagodeunadeuda)
+- [definirValorMensualDeAlicuotas](#requisito-definirvalormensualdealicuotas)
+- [consultarDeuda](#requisito-consultardeuda)
+- [consultarPagosEfectuados](#requisito-consultarpagosefectuados)
+- [solicitarPagoEnCuotas](#requisito-solicitarpagoencuotas)
+- [eliminarFormaDePagoRecurrente](#requisito-eliminarformadepagorecurrente)
+- [generarCertificadoDeNoDeudor](#requisito-generarcertificadodenodeudor)
+- [registrarPago](#requisito-registrarpago)
+- [definirPagoDeAlicuotasDeFormaMensual](#requisito-definirpagodealicuotasdeformamensual)
+- [registrarDeudaMensual](#requisito-registrardeudamensual)
+- [enviarRecordatorioDeDeudaPendiente](#requisito-enviarrecordatoriodedeudapendiente)
 
 
 ---
@@ -385,53 +385,66 @@ El Sistema permitirá a un residente solicitar el pago en cuotas.
 ## Escenario Básico:
 
 1. El caso de uso inicia con el Residente ingresando el idDeuda que desea diferir
-2. El Residente ingresa el numero de meses a los cuales desea diferir la deuda 
-3. El Residente ingresa al módulo de "Mis Obligaciones" y selecciona una deuda específica elegible para financiamiento (por ejemplo, un cargo extraordinario).
-4. El Residente hace clic en la opción "Solicitar Pago en Cuotas".
-5. El Sistema despliega un formulario solicitando la información del financiamiento: Número de cuotas deseadas (entre 2 y 12 meses)
-6. El Residente selecciona el número de cuotas (entero mayor a uno y menor o igual a 12 ej. 6) y confirma la solicitud.
-7. El Sistema calcula automáticamente el valor individual de cada cuota dividiendo el valor total de la deuda para el número de cuotas ingresadas, redondeando a dos decimales.
-8. El Sistema muestra una vista previa del plan de pagos detallando: ID del plan, ID del residente, obligación asociada, valor total de la deuda, número de cuotas, valor de cada cuota, fecha de inicio y fecha de finalización.
-9. El Residente revisa y acepta los términos del diferimiento.
-10. El Sistema registra el plan de pagos con estado "SOLICITADO", genera una notificación para el Administrador, y muestra un mensaje de éxito en pantalla.
-11. El plan de pagos queda registrado en la base de datos.
+2. El Residente ingresa el numero de meses a los cuales desea diferir la deuda
+3. El Sistema valida el formato del número de meses a los cuales desea difierir la deuda
+4. Si el número de meses es mayor a 2 entonces el Sistema consulta las deudas pendientes del residente
+5. Si el Residente NO tiene deudas pendientes, entonces el Sistema calcula el valor a pagar por cada cuota según el valor de la deuda y el número de meses a diferir
+6. El sistema genera tantas deudas como número de meses a diferir con fechas máximas de pago saltadas de un mes en un mes y el valor calculado
+7. El Sistema emite el mensaje "Deuda diferida exitosamente"
+8. El caso de uso finaliza con el Sistema mostrando las deudas que hacen referencia a las cuotas. 
+
 
 ## Escenario(s) alternativo(s):**
 
 ### Escenario alternativo 1**
-1. El Residente se encuentra autenticado en el sistema.
-2. El Residente no posee obligaciones de pago o cargo extraordinario en estado "PENDIENTE" o "EN MORA".
-3. El Residente intenta solicitar un diferimiento sobre una obligación cuyo estado es "PAGADO".
-4. El Sistema verifica el estado de la obligación en la base de datos.
-5. El Sistema al detectar que el estado es "PAGADO", oculta o inhabilita por completo el botón "Solicitar Pago en Cuotas" para esa transacción específica, impidiendo el inicio del flujo.
+1. El caso de uso inicia con el Residente ingresando el idDeuda que desea diferir
+2. El Residente ingresa el numero de meses a los cuales desea diferir la deuda
+3. El Sistema valida el formato del número de meses a los cuales desea difierir la deuda
+4. Si el número de NO meses es mayor a 2 entonces el caso de uso finaliza con el Sistema emitiendo el mensaje "El numero de meses a diferir la deuda debe ser de almenos 3" y sin diferir la deuda
 
 ### Escenario alternativo 2**
-1. El Residente se encuentra autenticado en el sistema.
-2. El Residente posee al menos una obligación de pago o cargo extraordinario en estado "PENDIENTE" o "EN MORA".
-3. El Residente ingresa al módulo de "Mis Obligaciones" y selecciona una deuda específica elegible para financiamiento (por ejemplo, un cargo extraordinario).
-4. El Residente intenta solicitar un plan de pagos para una obligación que ya se encuentra asociada a un plan previo en estado "SOLICITADO" o "APROBADO".
-5. El Sistema, al procesar la solicitud, realiza una consulta cruzada en la tabla de planes de pago.
-6. El Sistema interrumpe el proceso y despliega una alerta en pantalla: "Acción no permitida: Esta obligación ya cuenta con un plan de pagos activo o en proceso de aprobación".
-7. El Sistema redirecciona al usuario al módulo de "Mis Obligaciones".
-
-### Escenario alternativo 3**
-1. El Residente se encuentra autenticado en el sistema.
-2. El Residente posee al menos una obligación de pago o cargo extraordinario en estado "PENDIENTE" o "EN MORA".
-3. El Residente ingresa al módulo de "Mis Obligaciones" y selecciona una deuda específica elegible para financiamiento (por ejemplo, un cargo extraordinario).
-4. El Residente hace clic en la opción "Solicitar Pago en Cuotas".
-5. El Sistema despliega un formulario solicitando la información del financiamiento: Número de cuotas deseadas (entre 2 y 12 meses)
-6. El Residente selecciona el número de cuotas (entero mayor a uno y menor o igual a 12 ej. 6) y confirma la solicitud.
-7. El Sistema calcula automáticamente el valor individual de cada cuota dividiendo el valor total de la deuda para el número de cuotas ingresadas, redondeando a dos decimales.
-8. El Sistema muestra una vista previa del plan de pagos detallando: ID del plan, ID del residente, obligación asociada, valor total de la deuda, número de cuotas, valor de cada cuota, fecha de inicio y fecha de finalización.
-9. el Residente decide no aceptar la simulación de las cuotas o el valor individual calculado por el sistema.
-10. El Residente hace clic en el botón "Cancelar Solicitud".
-11. Sistema: Revierte los cálculos temporales en memoria, no realiza ningún registro en la base de datos y regresa al usuario al módulo de "Mis Obligaciones".
+1. El caso de uso inicia con el Residente ingresando el idDeuda que desea diferir
+2. El Residente ingresa el numero de meses a los cuales desea diferir la deuda
+3. El Sistema valida el formato del número de meses a los cuales desea difierir la deuda
+4. Si el número de meses es mayor a 2 entonces el Sistema consulta las deudas pendientes del residente
+5. Si el Residente SI tiene deudas pendientes, entonces el Sistema emite el mensaje "Tiene deudas pendientes de pago, no puede ser beneficiario para diferir una deuda hasta que pague todos sus valores"
+6. El caso de uso finaliza con el Sistema sin diferir la deuda
 
 ---
+# Requisito: definirPagoDeAlicuotasDeFormaMensual
+El sistema permitirá definir el pago de  alícuotas de forma mensual (como pago recurrente).
 
+### Escenario Básico:**
+
+1. El caso de uso inicia con el Residente ingresando el valor de pago que desea pagar de forma recurrente.
+2. El Sistema consulta el valor de alicuotas mensual y calcula la alicuota respectiva para el residente
+3. El Sistema verifica si el valor ingresado por el usuario es igual al valor que le corresponde cancelar por concepto de alícuota.
+4. SI el valor ingresado es válido entonces el Sistema consulta los datos financieros del Residente
+5. Si el Residente cuenta con datos financieros, entonces el Sistema guarda el pago recurrente y debitará mes a mes de la tarjeta o de la cuenta registrada.
+6. El caso de uso finaliza con el Sistema emitiendo el mensaje "Pago recurrente guardado exitosamente"
+
+## Escenario(s) alternativo(s):**
+
+### Escenario alternativo 1:**
+
+1. El caso de uso inicia con el Residente ingresando el valor de pago que desea pagar de forma recurrente.
+2. El Sistema consulta el valor de alicuotas mensual y calcula la alicuota respectiva para el residente
+3. El Sistema verifica si el valor ingresado por el usuario es igual al valor que le corresponde cancelar por concepto de alícuota.
+4. SI el valor ingresado NO válido entonces el Sistema emite el mensaje "Su valor de alicuota no corresponde al valor que desea pagar mensualmente, el valor que le corresponde es: valor"
+5. El caso de uso finaliza sin que se guarde un pago recurrente.
+
+### Escenario alternativo 2:**
+
+1. El caso de uso inicia con el Residente ingresando el valor de pago que desea pagar de forma recurrente.
+2. El Sistema consulta el valor de alicuotas mensual y calcula la alicuota respectiva para el residente
+3. El Sistema verifica si el valor ingresado por el usuario es igual al valor que le corresponde cancelar por concepto de alícuota.
+4. SI el valor ingresado es válido entonces el Sistema consulta los datos financieros del Residente
+5. Si el Residente NO cuenta con datos financieros, entonces el Sistema emite el mensaje "Debe registrar una tarjeta de debito / credito para configurar el pago recurrente"
+6. El caso de uso finaliza sin que se guarde el pago recurrente.
+
+---
 # Requisito: eliminarFormaDePagoRecurrente
 El sistema permitira eliminar la forma de pago recurrente.
-Este escenario describe el camino ideal en el que el usuario elimina una tarjeta o cuenta bancaria configurada para débitos automáticos sin inconvenientes.
 
 ## Escenario Básico:**
 
@@ -496,8 +509,6 @@ Este escenario describe el camino ideal en el que un residente solvente solicita
 11. El Sistema registra la acción en un historial de logs.
 
 
-
-
 ## Escenario(s) alternativo(s):**
 
 ### Escenario alternativo 1**
@@ -519,38 +530,86 @@ Este escenario describe el camino ideal en el que un residente solvente solicita
 15. El Sistema registra la acción en un historial de logs.
 
 
----
 
-## Requisito: definirPagoDeAlicuotasDeFormaMensual
-El sistema permitirá definir el pago de  alícuotas de forma mensual (como pago recurrente).
+---
+# Requisito: registrarPago
+El sistema permitirá registrar el pago de una deuda.
 
 ### Escenario Básico:**
 
-1. El caso de uso inicia con el Administrador ingresando el número de meses de alícuota.
-2. El Sistema valida el valor ingresado.
-3. SI el valor ingresado es válido ENTONCES el Administrador ingresa el día del mes para el pago.
-4. El Sistema valida el valor ingresado.
-5. Si el valor ingresado es válido ENTONCES el Sistema calcula las fechas de pago de cada alícuota.
-6. El caso de uso termina con el sistema definiendo las deudas por concepto de alícuota con su valor a pagar y fecha límite.
+1. El caso de uso inicia con el Residente ingresando el id de la deuda a pagar
+2. El Sistema verifica que exista una deuda con el id ingresado
+3. Si la deuda existe, entonces el Sistema muestra el valor de la deuda a pagar y el estado de la deuda
+4. El Residente ingresa el método de pago
+5. Si el método de pago es EFECTIVO, entonces el Sistema cambia el valor de la deuda a "PENDIENTE"
+6. El caso de uso finaliza con el Sistema emitiendo el mensaje "Acerquese a oficinas de contabilidad para efectuar el pago"
 
 ## Escenario(s) alternativo(s):**
 
 ### Escenario alternativo 1:**
 
-1. El caso de uso inicia con el Administrador ingresando el número de meses de alícuota.
-2. El Sistema valida el valor ingresado.
-3. SI el valor ingresado NO es válido ENTONCES el caso de uso termina con el Sistema emitiendo el mensaje “El número de meses ingresado no es válido, asegúrese que sea un número entero mayor a 0”.
+1. El caso de uso inicia con el Residente ingresando el id de la deuda a pagar
+2. El Sistema verifica que exista una deuda con el id ingresado
+3. Si la deuda existe, entonces el Sistema muestra el valor de la deuda a pagar y el estado de la deuda
+4. El Residente ingresa el método de pago
+5. Si el método de pago es TRANSFERENCIA, entonces el Sistema cambia el valor de la deuda a "PENDIENTE"
+6. El Sistema consulta los datos bancarios registrados por el Administrador
+7. Si existen datos bancarios, entonces el Sistema muestra los datos bancarios
+8. El Residente ingresa el comprobante de deposito
+9. El caso de uso finaliza con el Sistema "Se revisara el deposito y se actualizara el estado de su deuda en las próximas horas"
 
 ### Escenario alternativo 2:**
 
-1. El caso de uso inicia con el Administrador ingresando el número de meses de alícuota.
-2. El Sistema valida el valor ingresado.
-3. SI el valor ingresado es válido ENTONCES el Administrador ingresa el día del mes para el pago.
-4. El Sistema valida el valor ingresado.
-5. Si el valor ingresado NO es válido ENTONCES el caso de uso termina con el Sistema emitiendo el mensaje “El día ingresado no es válido, asegúrese que haya ingresado un número entero mayor que 0 y menor que 28”.
+1. El caso de uso inicia con el Residente ingresando el id de la deuda a pagar
+2. El Sistema verifica que exista una deuda con el id ingresado
+3. Si la deuda existe, entonces el Sistema muestra el valor de la deuda a pagar y el estado de la deuda
+4. El Residente ingresa el método de pago
+5. Si el método de pago es TARJETA, entonces el Sistema muestra en pantalla el mensaje "Ingrese los datos de su tarjeta "
+6. El Residente ingresa los datos de su tarjeta
+7. La Plataforma externa procesa el pago y devuelve la aceptación o no
+8. Si el pago fue aceptado, entonces el Sistema cambia el estado de la deuda a "PAGADO"
+9. El caso de uso finaliza con el Sistema emitiendo el mensaje "Deuda cancelada exitosamente"
 
+---
 
-## Requisito: enviarRecordatorioDeDeudaPendiente
+# Requisito: registrarDeudaMensual
+
+El sistema registra el valor de alicuotas de cada cliente de forma mensual
+
+## Datos del Caso de Uso
+
+- **Actor:** Sistema Automático
+- **Entradas:** id del Residente
+- **Salidas:** email al Cliente notificando sobre la deuda
+
+## Escenario Básico
+
+1. El caso de uso inicia cuando el Sistema identifica una obligación de pago en estado "PENDIENTE" o "EN MORA".
+2. El Sistema verifica que la obligación de pago esté asociada a un residente.
+3. SI la obligación de pago está asociada a un residente ENTONCES el Sistema verifica que el residente tenga un correo electrónico registrado.
+4. SI el residente tiene un correo electrónico registrado ENTONCES el Sistema genera un recordatorio con el nombre completo del residente, el identificador del departamento y el saldo pendiente total.
+5. El caso de uso termina con el Sistema enviando el recordatorio y emitiendo el mensaje "Recordatorio de deuda pendiente enviado correctamente".
+
+## Escenarios Alternos
+
+### Escenario Alterno 1
+
+1. El caso de uso inicia cuando el Sistema identifica una obligación de pago en estado "PENDIENTE" o "EN MORA".
+2. El Sistema verifica que la obligación de pago esté asociada a un residente.
+3. SI la obligación de pago NO está asociada a un residente ENTONCES el Sistema emite el mensaje "No existe un residente asociado a la obligación de pago".
+4. El caso de uso termina sin enviar el recordatorio de deuda pendiente.
+
+### Escenario Alterno 2
+
+1. El caso de uso inicia cuando el Sistema identifica una obligación de pago en estado "PENDIENTE" o "EN MORA".
+2. El Sistema verifica que la obligación de pago esté asociada a un residente.
+3. SI la obligación de pago está asociada a un residente ENTONCES el Sistema verifica que el residente tenga un correo electrónico registrado.
+4. SI el residente NO tiene un correo electrónico registrado ENTONCES el Sistema emite el mensaje "No se puede enviar el recordatorio porque el residente no tiene un correo electrónico registrado".
+5. El caso de uso termina sin enviar el recordatorio de deuda pendiente.
+
+---
+
+# Requisito: enviarRecordatorioDeDeudaPendiente
 
 El sistema permitirá enviar un recordatorio al correo electrónico de un residente cuando tenga obligaciones de pago en estado "PENDIENTE" o "EN MORA".
 
