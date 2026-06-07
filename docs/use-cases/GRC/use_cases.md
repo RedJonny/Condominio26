@@ -2,7 +2,29 @@
 
 ---
 
+<<<<<<< HEAD
+## Índice
+
+- [Documentación de Casos de Uso — Sistema de Gestión de Inmuebles](#documentación-de-casos-de-uso--sistema-de-gestión-de-inmuebles)
+  - [Índice](#índice)
+  - [UC1: Administrar inmuebles](#uc1-administrar-inmuebles)
+  - [UC1: administrarInmuebles](#uc1-administrarinmuebles)
+  - [UC2: registrarEdificios](#uc2-registraredificios)
+  - [UC3: registrarDepartamentosSuitesEstudiosYLocales](#uc3-registrardepartamentossuitesestudiosylocales)
+  - [UC4: mantenerCatalogoDelCondominio](#uc4-mantenercatalogodelcondominio)
+  - [UC5: gestionarCaracteristicasDelCondominio](#uc5-gestionarcaracteristicasdelcondominio)
+  - [UC6: gestionarPropiedades](#uc6-gestionarpropiedades)
+  - [UC7: realizarReservaOAgenda](#uc7-realizarreservaoagenda)
+  - [UC8: gestionarNotificacionesYRecordatorios](#uc8-gestionarnotificacionesyrecordatorios)
+  - [UC9: actualizarEstadoDelInmueble](#uc9-actualizarestadodelinmueble)
+  - [UC10: generarReportesDeCambios](#uc10-generarreportesdecambios)
+
+---
+
+## UC1: Administrar inmuebles
+=======
 ## UC1: administrarInmuebles
+>>>>>>> 6325e89850b89c4151cf69c559b795ea6fec870d
 
 **Descripción**
 Permite al Administrador gestionar los inmuebles registrados en el condominio, incluyendo edificios, departamentos, suites, estudios y locales comerciales.
@@ -214,43 +236,60 @@ Ninguno
 ## UC7: realizarReservaOAgenda
 
 **Descripción**
-Permite al Usuario (residente o inquilino) realizar reservas de áreas comunes o agendar eventos en el condominio.
+Permite al Administrador registrar, gestionar y dar seguimiento a eventos imprevistos que afectan a uno o varios inmuebles del condominio, tales como daños estructurales, inundaciones, incendios, cortes de servicios básicos o cualquier situación extraordinaria que requiera atención y control.
 
 **Actor Principal**
-Usuario
+Administrador
 
 **Actores Secundarios**
 Ninguno
 
 **Precondiciones**
 - El Usuario ha iniciado sesión.
-- El área común o recurso está disponible.
+- Existe un inmueble o área común asociada al incidente.
 
 **Postcondiciones**
-- La reserva queda registrada en el sistema.
-- Se generan notificaciones automáticas.
+- El caso fortuito queda registrado en el sistema.
+- Se actualiza el estado del caso según las acciones realizadas.
+- Se generan las notificaciones correspondientes..
 
 **Flujo Principal**
+<<<<<<< HEAD
+1. El Administrador selecciona la opción "Administrar caso fortuito".
+2. El sistema muestra los casos registrados y la opción para crear uno nuevo.
+3. El Administrador registra la información del incidente.
+4. El sistema solicita detalles como fecha, ubicación, descripción y nivel de afectación.
+5. El Administrador ingresa la información requerida.
+6. El sistema valida los datos.
+7. El sistema registra el caso fortuito.
+8. El sistema ejecuta el caso de uso "Gestionar notificaciones y recordatorios".
+9. El sistema confirma el registro del incidente.
+=======
 1. El Usuario selecciona "realizarReservaOAgenda".
 2. El sistema muestra los recursos disponibles.
 3. El Usuario elige fecha, hora y recurso.
 4. El sistema verifica disponibilidad.
 5. El sistema confirma la reserva.
 6. El sistema envía notificación al Usuario.
+>>>>>>> 6325e89850b89c4151cf69c559b795ea6fec870d
 
 **Flujos Alternativos**
-- **A1. Recurso no disponible:** El sistema sugiere fechas u horarios alternativos.
+- **A1. Datos incompletos:** El sistema detecta información obligatoria faltante y solicita su corrección.
+- **A2. Caso duplicado:** El sistema detecta que el incidente ya fue registrado y solicita verificar la información.
 
 **Reglas de Negocio**
-- No se pueden solapar reservas en el mismo recurso y horario.
-- El Usuario no puede reservar más de X horas por semana (según política del condominio).
+- Todo caso fortuito debe estar asociado a una ubicación específica.
+- Debe registrarse la fecha y hora de ocurrencia.
+- Solo los administradores pueden crear, modificar o cerrar casos fortuitos.
+- Todo caso fortuito debe mantener un historial de seguimiento.
+- 
 
 ---
 
 ## UC8: gestionarNotificacionesYRecordatorios
 
 **Descripción**
-Permite gestionar el envío de notificaciones y recordatorios relacionados con reservas, pagos o eventos del condominio.
+Permite generar y enviar notificaciones relacionadas con casos fortuitos registrados en el sistema, informando a los propietarios y responsables sobre incidentes, actualizaciones, acciones correctivas o resolución de eventos.
 
 **Actor Principal**
 Usuario
@@ -259,23 +298,25 @@ Usuario
 Administrador, Propietario
 
 **Precondiciones**
-- Existe una reserva o evento programado.
+- Existe un caso fortuito registrado.
 
 **Postcondiciones**
-- Las notificaciones se envían según la configuración.
+- Las notificaciones son enviadas a los destinatarios correspondientes.
 
 **Flujo Principal**
-1. El sistema detecta un evento que requiere notificación.
-2. El sistema genera la notificación o recordatorio.
-3. El sistema envía al medio configurado (correo, app, SMS).
-4. El actor recibe y puede configurar preferencias.
+1. El sistema detecta la creación o actualización de un caso fortuito.
+2. El sistema identifica a los destinatarios afectados.
+3. El sistema genera la notificación correspondiente.
+4. El sistema envía la notificación mediante los canales configurados.
+5. El destinatario recibe el mensaje.
+6. El sistema registra el resultado del envío.
 
 **Flujos Alternativos**
-- **A1. Fallo en envío:** El sistema reintenta o registra error en log.
+- **A1. Fallo en envío:** El sistema registra el fallo y programa un nuevo intento.
 
 **Reglas de Negocio**
-- Los recordatorios se envían con 24h, 1h y 15min de anticipación.
-- El Usuario puede desactivar notificaciones no críticas.
+- Toda actualización relevante de un caso fortuito debe generar una notificación.
+- Los propietarios solo reciben información relacionada con inmuebles bajo su responsabilidad o afectación.
 
 ---
 
